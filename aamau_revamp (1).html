@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AAMAU — Australia Agricultural Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --soil: #2C1A0E;
+    --wheat: #C8933A;
+    --wheat-light: #E8B96A;
+    --sage: #4A6741;
+    --sage-light: #6B9162;
+    --cream: #F5EDD8;
+    --dust: #D4C4A0;
+    --sky: #1A2E3B;
+    --white: #FDFAF4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--white);
+    color: var(--soil);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 4rem;
+    background: rgba(28, 16, 8, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(200,147,58,0.2);
+  }
+
+  .nav-logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .nav-logo .abbr {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--wheat);
+    letter-spacing: 0.1em;
+  }
+
+  .nav-logo .full {
+    font-size: 0.62rem;
+    color: var(--dust);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--dust);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--wheat); }
+
+  .nav-cta {
+    background: var(--wheat);
+    color: var(--soil) !important;
+    padding: 0.5rem 1.4rem !important;
+    border-radius: 2px;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--sky) 0%, var(--soil) 60%, #1A0E06 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(200,147,58,0.08) 0%, transparent 70%),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 80px,
+        rgba(200,147,58,0.03) 80px,
+        rgba(200,147,58,0.03) 81px
+      );
+  }
+
+  .hero-text { position: relative; z-index: 2; }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--wheat);
+    border: 1px solid rgba(200,147,58,0.4);
+    padding: 0.35rem 1rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--wheat);
+  }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--dust);
+    line-height: 1.8;
+    max-width: 480px;
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--wheat);
+    color: var(--soil);
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--wheat-light); transform: translateY(-2px); }
+
+  .btn-outline {
+    border: 1px solid rgba(200,147,58,0.5);
+    color: var(--wheat);
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-block;
+  }
+
+  .btn-outline:hover {
+    border-color: var(--wheat);
+    background: rgba(200,147,58,0.08);
+  }
+
+  .hero-visual {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1.5rem;
+  }
+
+  .stat-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(200,147,58,0.15);
+    padding: 1.5rem;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.3s;
+  }
+
+  .stat-card:hover { border-color: rgba(200,147,58,0.4); }
+
+  .stat-card .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--wheat);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-card .label {
+    font-size: 0.72rem;
+    color: var(--dust);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .hero-contact-strip {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(200,147,58,0.08);
+    border: 1px solid rgba(200,147,58,0.2);
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .contact-item .ci-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--wheat);
+    font-weight: 600;
+  }
+
+  .contact-item .ci-val {
+    font-size: 0.82rem;
+    color: var(--dust);
+    font-weight: 400;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 4px;
+    background: linear-gradient(90deg, var(--sage), var(--wheat), var(--sage));
+  }
+
+  /* SECTION BASE */
+  section { padding: 6rem 4rem; }
+
+  .section-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sage);
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--soil);
+    margin-bottom: 1.2rem;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    color: #5A4A3A;
+    line-height: 1.8;
+    font-weight: 300;
+    max-width: 600px;
+  }
+
+  /* ABOUT */
+  .about {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .about-left {}
+
+  .about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-block {
+    border-left: 3px solid var(--wheat);
+    padding-left: 1.5rem;
+  }
+
+  .about-block h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--soil);
+    margin-bottom: 0.4rem;
+  }
+
+  .about-block p {
+    font-size: 0.9rem;
+    color: #5A4A3A;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* COMMODITIES */
+  .commodities {
+    background: var(--soil);
+    color: var(--cream);
+  }
+
+  .commodities .section-title { color: var(--cream); }
+  .commodities .section-tag { color: var(--wheat); }
+  .commodities .section-sub { color: var(--dust); }
+
+  .comm-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    margin-top: 3rem;
+    background: rgba(200,147,58,0.1);
+  }
+
+  .comm-item {
+    background: rgba(255,255,255,0.03);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: background 0.3s;
+    cursor: default;
+  }
+
+  .comm-item:hover { background: rgba(200,147,58,0.08); }
+
+  .comm-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .comm-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+  }
+
+  .comm-val {
+    font-size: 0.8rem;
+    color: var(--wheat);
+    font-weight: 600;
+  }
+
+  /* TABLE SECTION */
+  .data-section {
+    background: var(--white);
+    padding: 6rem 4rem;
+  }
+
+  .data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead tr {
+    background: var(--soil);
+  }
+
+  thead th {
+    padding: 1rem 1.2rem;
+    text-align: left;
+    color: var(--wheat);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(44,26,14,0.08);
+    transition: background 0.2s;
+  }
+
+  tbody tr:hover { background: rgba(200,147,58,0.05); }
+
+  tbody td {
+    padding: 0.9rem 1.2rem;
+    color: var(--soil);
+    font-weight: 400;
+  }
+
+  tbody td:first-child {
+    font-weight: 600;
+  }
+
+  tbody td:not(:first-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: #4A3A2A;
+  }
+
+  .table-note {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #8A7A6A;
+    font-style: italic;
+  }
+
+  /* SERVICES */
+  .services {
+    background: var(--cream);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .service-card {
+    background: var(--white);
+    border: 1px solid rgba(44,26,14,0.1);
+    padding: 2.5rem 2rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .service-card:hover {
+    border-color: var(--wheat);
+    transform: translateY(-4px);
+  }
+
+  .service-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(200,147,58,0.15);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .service-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--soil);
+    margin-bottom: 0.8rem;
+  }
+
+  .service-desc {
+    font-size: 0.88rem;
+    color: #5A4A3A;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* ZONES */
+  .zones {
+    background: var(--soil);
+    color: var(--cream);
+  }
+
+  .zones .section-title { color: var(--cream); }
+  .zones .section-tag { color: var(--wheat); }
+
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 3rem;
+    border: 1px solid rgba(200,147,58,0.15);
+  }
+
+  .zone-item {
+    padding: 3rem 2.5rem;
+    border-right: 1px solid rgba(200,147,58,0.15);
+    transition: background 0.3s;
+  }
+
+  .zone-item:last-child { border-right: none; }
+  .zone-item:hover { background: rgba(200,147,58,0.05); }
+
+  .zone-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(200,147,58,0.2);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .zone-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--wheat);
+    margin-bottom: 1rem;
+  }
+
+  .zone-desc {
+    font-size: 0.88rem;
+    color: var(--dust);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* CONTACT */
+  .contact {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--soil) 100%);
+    color: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .contact .section-title { color: var(--cream); }
+  .contact .section-tag { color: var(--wheat); }
+  .contact .section-sub { color: var(--dust); }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .cd-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .cd-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(200,147,58,0.1);
+    border: 1px solid rgba(200,147,58,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .cd-info .cd-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--wheat);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .cd-info .cd-val {
+    font-size: 0.95rem;
+    color: var(--cream);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(200,147,58,0.2);
+    padding: 0.9rem 1.2rem;
+    color: var(--cream);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: rgba(212,196,160,0.4); }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color: var(--wheat); }
+
+  .contact-form textarea { min-height: 120px; }
+
+  /* FOOTER */
+  footer {
+    background: #0E0906;
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid rgba(200,147,58,0.1);
+  }
+
+  .footer-logo .abbr {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--wheat);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: #5A4A3A;
+    font-weight: 300;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-text > * {
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero-tag { animation-delay: 0.1s; }
+  .hero h1 { animation-delay: 0.3s; }
+  .hero p { animation-delay: 0.5s; }
+  .hero-btns { animation-delay: 0.7s; }
+
+  .hero-visual {
+    animation: fadeUp 1s ease 0.5s forwards;
+    opacity: 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 3rem; }
+    .hero-visual { align-items: flex-start; }
+    .stat-cards { max-width: 100%; }
+    .about { grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 1.5rem; }
+    .commodities { padding: 4rem 1.5rem; }
+    .comm-grid { grid-template-columns: repeat(2, 1fr); }
+    .data-section { padding: 4rem 1.5rem; }
+    .services { padding: 4rem 1.5rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .zones { padding: 4rem 1.5rem; }
+    .zones-grid { grid-template-columns: 1fr; }
+    .zone-item { border-right: none; border-bottom: 1px solid rgba(200,147,58,0.15); }
+    .contact { grid-template-columns: 1fr; gap: 2.5rem; padding: 4rem 1.5rem; }
+    footer { padding: 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="abbr">AAMAU</span>
+    <span class="full">Australia Agricultural Management</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#commodities">Commodities</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#data">Market Data</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+    <li><a href="#" class="nav-cta" onclick="openBooking();return false;">Book a Consultation</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <span class="hero-tag">Est. — Potts Point, NSW</span>
+    <h1>Managing <em>Australia's</em> Agricultural Future</h1>
+    <p>We connect producers, investors and agribusiness across Australia's most productive farming regions — from the high rainfall coasts to the vast pastoral zones.</p>
+    <div class="hero-btns">
+      <a href="#services" class="btn-primary">Our Services</a>
+      <a href="#" class="btn-outline" onclick="openBooking();return false;">Book a Consultation</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="num">$155B</div>
+        <div class="label">Annual Agri. Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">12%</div>
+        <div class="label">Share of GDP</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">135K+</div>
+        <div class="label">Farms Nationwide</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">61%</div>
+        <div class="label">Land Coverage</div>
+      </div>
+    </div>
+    <div class="hero-contact-strip">
+      <div class="contact-item">
+        <span class="ci-label">Phone</span>
+        <span class="ci-val">+61 2 8542 2220</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Web</span>
+        <span class="ci-val">aamau.com</span>
+      </div>
+      <div class="contact-item">
+        <span class="ci-label">Location</span>
+        <span class="ci-val">Potts Point, NSW 2011</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-left">
+    <span class="section-tag">Who We Are</span>
+    <h2 class="section-title">A Cornerstone of Australian Agribusiness</h2>
+    <p class="section-sub">Australia is one of the world's major agricultural producers and exporters. AAMAU works at the centre of this industry — providing management, advisory, and market intelligence services to farms, graziers, and agribusiness operators across the country.</p>
+  </div>
+  <div class="about-right">
+    <div class="about-block">
+      <h4>Nationwide Reach</h4>
+      <p>From coastal high-rainfall zones to vast inland pastoral regions, our expertise spans every agricultural environment Australia has to offer.</p>
+    </div>
+    <div class="about-block">
+      <h4>Climate-Informed Strategy</h4>
+      <p>CSIRO forecasts decreased precipitation across much of Australia. We help clients adapt — managing water availability, irrigation strategy, and drought resilience.</p>
+    </div>
+    <div class="about-block">
+      <h4>Irrigation & Dry-Land Farming</h4>
+      <p>Australia's farmlands span both irrigation and dry-land systems. We understand the operational complexity of both and provide management advice tailored to each.</p>
+    </div>
+    <div class="about-block">
+      <h4>Market Access</h4>
+      <p>We support producers in accessing both domestic and export markets — helping connect Australian agricultural output with global demand.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMMODITIES -->
+<section class="commodities" id="commodities">
+  <span class="section-tag">Primary Production</span>
+  <h2 class="section-title">Key Commodity Sectors</h2>
+  <p class="section-sub">Australia produces a large variety of primary products for export and domestic consumption across these major commodity categories.</p>
+  <div class="comm-grid">
+    <div class="comm-item">
+      <span class="comm-icon">🐄</span>
+      <div class="comm-name">Cattle & Calves</div>
+      <div class="comm-val">$6.5B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🌾</span>
+      <div class="comm-name">Wheat</div>
+      <div class="comm-val">$6.0B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🥛</span>
+      <div class="comm-name">Dairy & Milk</div>
+      <div class="comm-val">$3.2B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🍎</span>
+      <div class="comm-name">Fruit & Nuts</div>
+      <div class="comm-val">$2.9B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🧅</span>
+      <div class="comm-name">Vegetables</div>
+      <div class="comm-val">$2.7B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🐑</span>
+      <div class="comm-name">Wool</div>
+      <div class="comm-val">$2.1B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🌿</span>
+      <div class="comm-name">Barley</div>
+      <div class="comm-val">$1.6B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🐓</span>
+      <div class="comm-name">Poultry</div>
+      <div class="comm-val">$1.4B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🍖</span>
+      <div class="comm-name">Lamb</div>
+      <div class="comm-val">$1.3B+ / yr</div>
+    </div>
+    <div class="comm-item">
+      <span class="comm-icon">🎋</span>
+      <div class="comm-name">Sugar Cane</div>
+      <div class="comm-val">$1.2B+ / yr</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET DATA TABLE -->
+<section class="data-section" id="data">
+  <div class="data-header">
+    <div>
+      <span class="section-tag">Production Intelligence</span>
+      <h2 class="section-title">Top Agricultural Commodities by Value</h2>
+    </div>
+    <p style="font-size:0.78rem;color:#8A7A6A;font-style:italic;">Values in AUD millions</p>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Commodity</th>
+        <th>2017–18</th>
+        <th>2018–19</th>
+        <th>2019–20</th>
+        <th>2020–21</th>
+        <th>2021–22</th>
+        <th>2022–23</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Cattle & Calves</td><td>6,617</td><td>5,849</td><td>6,345</td><td>7,331</td><td>7,082</td><td>6,517</td></tr>
+      <tr><td>Wheat</td><td>6,356</td><td>2,692</td><td>5,636</td><td>4,320</td><td>5,905</td><td>6,026</td></tr>
+      <tr><td>Milk</td><td>3,717</td><td>2,795</td><td>2,808</td><td>3,194</td><td>3,268</td><td>3,245</td></tr>
+      <tr><td>Fruit & Nuts</td><td>2,333</td><td>2,408</td><td>2,350</td><td>2,640</td><td>2,795</td><td>2,915</td></tr>
+      <tr><td>Vegetables</td><td>2,269</td><td>2,126</td><td>2,356</td><td>2,490</td><td>2,601</td><td>2,715</td></tr>
+      <tr><td>Wool</td><td>2,713</td><td>3,318</td><td>2,397</td><td>2,196</td><td>2,187</td><td>2,138</td></tr>
+      <tr><td>Barley</td><td>1,725</td><td>984</td><td>1,750</td><td>1,240</td><td>1,744</td><td>1,624</td></tr>
+      <tr><td>Poultry</td><td>1,175</td><td>1,273</td><td>1,264</td><td>1,358</td><td>1,416</td><td>1,461</td></tr>
+      <tr><td>Lamb</td><td>1,181</td><td>1,161</td><td>1,318</td><td>1,327</td><td>1,425</td><td>1,348</td></tr>
+      <tr><td>Sugar Cane</td><td>989</td><td>1,019</td><td>854</td><td>968</td><td>1,037</td><td>1,208</td></tr>
+    </tbody>
+  </table>
+  <p class="table-note">Source: ABARES Australian Agricultural Commodity Statistics. Figures represent gross value of production (AUD millions).</p>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <span class="section-tag">What We Do</span>
+  <h2 class="section-title">Our Core Services</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <div class="service-title">Agricultural Management</div>
+      <p class="service-desc">End-to-end farm and pastoral management services — from operational planning to productivity optimisation across all major commodity sectors.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <div class="service-title">Market Intelligence</div>
+      <p class="service-desc">Commodity pricing, export data, and seasonal forecasting to help producers and investors make informed decisions with confidence.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <div class="service-title">Climate Adaptation</div>
+      <p class="service-desc">Strategic advisory for farms adapting to reduced precipitation forecasts — water management, irrigation planning, and drought resilience.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <div class="service-title">Agribusiness Advisory</div>
+      <p class="service-desc">Investment advisory, land acquisition assessment, and business structuring for agribusiness operators and institutional investors.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <div class="service-title">Export Facilitation</div>
+      <p class="service-desc">Connecting Australian producers to international buyers — navigating compliance, logistics, and market entry for key export commodities.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <div class="service-title">Sustainability Planning</div>
+      <p class="service-desc">Long-term land stewardship strategies that balance productivity with environmental responsibility across all farming zones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FARMING ZONES -->
+<section class="zones">
+  <span class="section-tag">Operating Environments</span>
+  <h2 class="section-title" style="color:var(--cream)">Australia's Three Farming Zones</h2>
+  <div class="zones-grid">
+    <div class="zone-item">
+      <div class="zone-letter">Z1</div>
+      <div class="zone-name">High Rainfall Zone</div>
+      <p class="zone-desc">Tasmania and a narrow coastal strip receiving reliable annual rainfall. Supports intensive cropping, dairying, and horticulture with year-round production cycles.</p>
+    </div>
+    <div class="zone-item">
+      <div class="zone-letter">Z2</div>
+      <div class="zone-name">Wheat-Sheep Zone</div>
+      <p class="zone-desc">The productive mixed farming belt combining wheat, sheep grazing for wool, lamb and mutton, and beef cattle. Australia's agricultural heartland by volume and value.</p>
+    </div>
+    <div class="zone-item">
+      <div class="zone-letter">Z3</div>
+      <div class="zone-name">Pastoral Zone</div>
+      <p class="zone-desc">Vast arid and semi-arid regions supporting extensive beef and sheep grazing. Land viability in South Australia is benchmarked against Goyder's Line — a critical climate boundary.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <span class="section-tag">Get in Touch</span>
+    <h2 class="section-title">Ready to Work Together?</h2>
+    <p class="section-sub">Whether you're a producer, investor, or agribusiness operator — we're here to help you navigate Australia's agricultural landscape.</p>
+    <div class="contact-details">
+      <div class="cd-row">
+        <div class="cd-icon">📍</div>
+        <div class="cd-info">
+          <div class="cd-label">Office Address</div>
+          <div class="cd-val">Suite 19/30-32 Kings Cross Rd<br>Potts Point NSW 2011, Australia</div>
+        </div>
+      </div>
+      <div class="cd-row">
+        <div class="cd-icon">📞</div>
+        <div class="cd-info">
+          <div class="cd-label">Phone</div>
+          <div class="cd-val">+61 2 8542 2220</div>
+        </div>
+      </div>
+      <div class="cd-row">
+        <div class="cd-icon">🌐</div>
+        <div class="cd-info">
+          <div class="cd-label">Website</div>
+          <div class="cd-val">aamau.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form">
+    <input type="text" placeholder="Your Name">
+    <input type="email" placeholder="Email Address">
+    <input type="text" placeholder="Company / Organisation">
+    <textarea placeholder="How can we help you?"></textarea>
+    <button class="btn-primary" style="border:none;cursor:pointer;text-align:center;">Send Enquiry →</button>
+  </div>
+</section>
+
+<!-- BOOKING SECTION ANCHOR -->
+<section id="booking" style="padding:6rem 4rem;background:var(--cream);">
+  <div style="text-align:center;max-width:700px;margin:0 auto;">
+    <span class="section-tag" style="display:block;text-align:center;">Schedule a Meeting</span>
+    <h2 class="section-title" style="text-align:center;">Book a Consultation</h2>
+    <p class="section-sub" style="margin:0 auto 2.5rem;text-align:center;">Speak directly with our agricultural management specialists. Select your service, choose a time, and we'll confirm within 24 hours.</p>
+    <button class="btn-primary" onclick="openBooking()" style="border:none;cursor:pointer;font-size:1rem;padding:1rem 2.5rem;">Schedule Now →</button>
+  </div>
+</section>
+
+<!-- BOOKING MODAL -->
+<div id="booking-overlay" style="display:none;position:fixed;inset:0;background:rgba(14,9,6,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+  <div id="booking-modal" style="background:var(--white);max-width:680px;width:95%;max-height:90vh;overflow-y:auto;position:relative;border:1px solid rgba(200,147,58,0.2);">
+
+    <!-- Modal Header -->
+    <div style="background:var(--soil);padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--wheat);margin-bottom:0.3rem;font-weight:700;">AAMAU Consulting</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--cream);font-weight:700;">Book a Consultation</div>
+      </div>
+      <button onclick="closeBooking()" style="background:none;border:none;color:var(--dust);font-size:1.5rem;cursor:pointer;line-height:1;padding:0.3rem;">✕</button>
+    </div>
+
+    <!-- Step Indicator -->
+    <div id="step-indicator" style="display:flex;border-bottom:1px solid rgba(44,26,14,0.1);">
+      <div class="step-tab active" id="tab-1" style="flex:1;padding:0.9rem;text-align:center;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--wheat);color:var(--wheat);">1. Service</div>
+      <div class="step-tab" id="tab-2" style="flex:1;padding:0.9rem;text-align:center;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid transparent;color:#8A7A6A;">2. Date & Time</div>
+      <div class="step-tab" id="tab-3" style="flex:1;padding:0.9rem;text-align:center;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid transparent;color:#8A7A6A;">3. Your Details</div>
+      <div class="step-tab" id="tab-4" style="flex:1;padding:0.9rem;text-align:center;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid transparent;color:#8A7A6A;">4. Confirm</div>
+    </div>
+
+    <div style="padding:2.5rem;">
+
+      <!-- STEP 1: Service Selection -->
+      <div id="step-1">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:0.5rem;color:var(--soil);">Select a Service</h3>
+        <p style="font-size:0.85rem;color:#5A4A3A;margin-bottom:1.5rem;font-weight:300;">Choose the type of consultation you need.</p>
+        <div id="service-list" style="display:flex;flex-direction:column;gap:0.8rem;">
+          <div class="service-option" onclick="selectService(this,'Agricultural Management','60 min')" data-service="Agricultural Management" data-duration="60 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Agricultural Management</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Farm operations, planning & productivity optimisation</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">60 min</span>
+          </div>
+          <div class="service-option" onclick="selectService(this,'Market Intelligence','45 min')" data-service="Market Intelligence" data-duration="45 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Market Intelligence</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Commodity pricing, export data & forecasting</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">45 min</span>
+          </div>
+          <div class="service-option" onclick="selectService(this,'Climate Adaptation','60 min')" data-service="Climate Adaptation" data-duration="60 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Climate Adaptation</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Water management, irrigation & drought resilience</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">60 min</span>
+          </div>
+          <div class="service-option" onclick="selectService(this,'Agribusiness Advisory','90 min')" data-service="Agribusiness Advisory" data-duration="90 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Agribusiness Advisory</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Investment, land acquisition & business structuring</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">90 min</span>
+          </div>
+          <div class="service-option" onclick="selectService(this,'Export Facilitation','45 min')" data-service="Export Facilitation" data-duration="45 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Export Facilitation</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Compliance, logistics & international market entry</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">45 min</span>
+          </div>
+          <div class="service-option" onclick="selectService(this,'Sustainability Planning','60 min')" data-service="Sustainability Planning" data-duration="60 min" style="border:1px solid rgba(44,26,14,0.12);padding:1.2rem 1.5rem;cursor:pointer;transition:all 0.2s;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-weight:600;font-size:0.95rem;color:var(--soil);">Sustainability Planning</div>
+              <div style="font-size:0.78rem;color:#8A7A6A;margin-top:0.2rem;">Land stewardship & long-term environmental strategy</div>
+            </div>
+            <span style="font-size:0.75rem;color:var(--wheat);font-weight:600;white-space:nowrap;margin-left:1rem;">60 min</span>
+          </div>
+        </div>
+        <div style="margin-top:2rem;text-align:right;">
+          <button onclick="goStep(2)" id="btn-step1" disabled style="background:var(--wheat);color:var(--soil);border:none;padding:0.85rem 2rem;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;opacity:0.4;transition:opacity 0.2s;">Next: Choose Date →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Calendar -->
+      <div id="step-2" style="display:none;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:0.5rem;color:var(--soil);">Select Date & Time</h3>
+        <p style="font-size:0.85rem;color:#5A4A3A;margin-bottom:1.5rem;font-weight:300;">Available slots are shown in AEST (Sydney time).</p>
+
+        <!-- Calendar -->
+        <div style="border:1px solid rgba(44,26,14,0.12);margin-bottom:1.5rem;">
+          <div style="background:var(--soil);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;">
+            <button onclick="prevMonth()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:1.2rem;padding:0.2rem 0.5rem;">‹</button>
+            <span id="cal-title" style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cream);"></span>
+            <button onclick="nextMonth()" style="background:none;border:none;color:var(--wheat);cursor:pointer;font-size:1.2rem;padding:0.2rem 0.5rem;">›</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);background:var(--cream);">
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Sun</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Mon</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Tue</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Wed</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Thu</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Fri</div>
+            <div style="padding:0.6rem;text-align:center;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8A7A6A;">Sat</div>
+          </div>
+          <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(44,26,14,0.06);"></div>
+        </div>
+
+        <!-- Time Slots -->
+        <div id="time-section" style="display:none;">
+          <div style="font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;color:var(--sage);margin-bottom:1rem;">Available Times — <span id="selected-date-label"></span></div>
+          <div id="time-slots" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;"></div>
+        </div>
+
+        <div style="margin-top:2rem;display:flex;justify-content:space-between;">
+          <button onclick="goStep(1)" style="background:none;border:1px solid rgba(44,26,14,0.2);padding:0.85rem 1.5rem;font-weight:600;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;color:var(--soil);">← Back</button>
+          <button onclick="goStep(3)" id="btn-step2" disabled style="background:var(--wheat);color:var(--soil);border:none;padding:0.85rem 2rem;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;opacity:0.4;transition:opacity 0.2s;">Next: Your Details →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Contact Details -->
+      <div id="step-3" style="display:none;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:0.5rem;color:var(--soil);">Your Details</h3>
+        <p style="font-size:0.85rem;color:#5A4A3A;margin-bottom:1.5rem;font-weight:300;">We'll send a confirmation to your email with meeting details.</p>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div>
+              <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">First Name *</label>
+              <input id="b-fname" type="text" placeholder="John" style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);">
+            </div>
+            <div>
+              <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">Last Name *</label>
+              <input id="b-lname" type="text" placeholder="Smith" style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">Email Address *</label>
+            <input id="b-email" type="email" placeholder="john@yourcompany.com.au" style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);">
+          </div>
+          <div>
+            <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">Phone Number</label>
+            <input id="b-phone" type="tel" placeholder="+61 4xx xxx xxx" style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);">
+          </div>
+          <div>
+            <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">Company / Organisation</label>
+            <input id="b-company" type="text" placeholder="Your Farm or Business Name" style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);">
+          </div>
+          <div>
+            <label style="font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#8A7A6A;display:block;margin-bottom:0.4rem;">Brief Description (optional)</label>
+            <textarea id="b-notes" placeholder="Tell us a bit about what you'd like to discuss..." style="width:100%;border:1px solid rgba(44,26,14,0.15);padding:0.8rem 1rem;font-family:'Barlow',sans-serif;font-size:0.9rem;outline:none;background:var(--white);color:var(--soil);min-height:90px;resize:vertical;"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:2rem;display:flex;justify-content:space-between;">
+          <button onclick="goStep(2)" style="background:none;border:1px solid rgba(44,26,14,0.2);padding:0.85rem 1.5rem;font-weight:600;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;color:var(--soil);">← Back</button>
+          <button onclick="goStep(4)" style="background:var(--wheat);color:var(--soil);border:none;padding:0.85rem 2rem;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Review Booking →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Confirmation -->
+      <div id="step-4" style="display:none;">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:0.5rem;color:var(--soil);">Review & Confirm</h3>
+        <p style="font-size:0.85rem;color:#5A4A3A;margin-bottom:1.5rem;font-weight:300;">Please review your booking details before confirming.</p>
+
+        <div style="background:var(--cream);border:1px solid rgba(44,26,14,0.1);padding:1.5rem;margin-bottom:1.5rem;">
+          <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--wheat);font-weight:700;margin-bottom:1rem;">Booking Summary</div>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="display:flex;justify-content:space-between;padding-bottom:0.8rem;border-bottom:1px solid rgba(44,26,14,0.08);">
+              <span style="font-size:0.82rem;color:#8A7A6A;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Service</span>
+              <span id="confirm-service" style="font-size:0.88rem;color:var(--soil);font-weight:600;text-align:right;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:0.8rem;border-bottom:1px solid rgba(44,26,14,0.08);">
+              <span style="font-size:0.82rem;color:#8A7A6A;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Date</span>
+              <span id="confirm-date" style="font-size:0.88rem;color:var(--soil);font-weight:600;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:0.8rem;border-bottom:1px solid rgba(44,26,14,0.08);">
+              <span style="font-size:0.82rem;color:#8A7A6A;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Time (AEST)</span>
+              <span id="confirm-time" style="font-size:0.88rem;color:var(--soil);font-weight:600;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding-bottom:0.8rem;border-bottom:1px solid rgba(44,26,14,0.08);">
+              <span style="font-size:0.82rem;color:#8A7A6A;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Duration</span>
+              <span id="confirm-duration" style="font-size:0.88rem;color:var(--soil);font-weight:600;"></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="font-size:0.82rem;color:#8A7A6A;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Name</span>
+              <span id="confirm-name" style="font-size:0.88rem;color:var(--soil);font-weight:600;"></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(74,103,65,0.08);border:1px solid rgba(74,103,65,0.2);padding:1rem 1.2rem;margin-bottom:1.5rem;display:flex;gap:0.8rem;align-items:flex-start;">
+          <span style="font-size:1rem;">📧</span>
+          <p style="font-size:0.82rem;color:var(--sage);line-height:1.6;font-weight:400;">A confirmation will be sent to <strong id="confirm-email-display"></strong>. Our team will follow up within 24 hours to finalise the meeting link or location.</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <button onclick="goStep(3)" style="background:none;border:1px solid rgba(44,26,14,0.2);padding:0.85rem 1.5rem;font-weight:600;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;color:var(--soil);">← Edit Details</button>
+          <button onclick="confirmBooking()" style="background:var(--sage);color:var(--white);border:none;padding:0.85rem 2rem;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Confirm Booking ✓</button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="step-success" style="display:none;text-align:center;padding:2rem 0;">
+        <div style="font-size:3.5rem;margin-bottom:1.5rem;">✅</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--soil);margin-bottom:0.8rem;">Booking Confirmed!</h3>
+        <p style="font-size:0.9rem;color:#5A4A3A;line-height:1.7;max-width:400px;margin:0 auto 1.5rem;font-weight:300;">Thank you. We've received your consultation request and will be in touch within 24 hours to confirm your meeting details.</p>
+        <div style="background:var(--cream);border:1px solid rgba(44,26,14,0.1);padding:1.2rem 2rem;display:inline-block;margin-bottom:2rem;">
+          <div id="success-summary" style="font-size:0.88rem;color:var(--soil);font-weight:500;line-height:1.8;"></div>
+        </div>
+        <br>
+        <button onclick="closeBooking()" style="background:var(--wheat);color:var(--soil);border:none;padding:0.85rem 2rem;font-weight:700;font-size:0.85rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <span class="abbr">AAMAU</span>
+  </div>
+  <span class="footer-copy">© 2026 Australia Agricultural Management. All rights reserved. · Potts Point, NSW 2011</span>
+</footer>
+
+<script>
+  // Booking state
+  const booking = { service: '', duration: '', date: null, time: '', fname: '', lname: '', email: '', phone: '', company: '', notes: '' };
+  let calYear, calMonth;
+
+  function openBooking() {
+    const now = new Date();
+    calYear = now.getFullYear();
+    calMonth = now.getMonth();
+    renderCalendar();
+    document.getElementById('booking-overlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    goStep(1);
+  }
+
+  function closeBooking() {
+    document.getElementById('booking-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('booking-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeBooking();
+  });
+
+  function goStep(n) {
+    [1,2,3,4,'success'].forEach(s => {
+      const el = document.getElementById('step-' + s);
+      if (el) el.style.display = 'none';
+    });
+    document.getElementById('step-' + n).style.display = 'block';
+
+    // Update tabs
+    for (let i = 1; i <= 4; i++) {
+      const tab = document.getElementById('tab-' + i);
+      if (!tab) continue;
+      if (i === n) {
+        tab.style.borderBottomColor = 'var(--wheat)';
+        tab.style.color = 'var(--wheat)';
+      } else {
+        tab.style.borderBottomColor = 'transparent';
+        tab.style.color = '#8A7A6A';
+      }
+    }
+
+    if (n === 4) populateConfirmation();
+  }
+
+  function selectService(el, name, dur) {
+    document.querySelectorAll('.service-option').forEach(o => {
+      o.style.borderColor = 'rgba(44,26,14,0.12)';
+      o.style.background = '';
+    });
+    el.style.borderColor = 'var(--wheat)';
+    el.style.background = 'rgba(200,147,58,0.05)';
+    booking.service = name;
+    booking.duration = dur;
+    const btn = document.getElementById('btn-step1');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+
+  // Calendar
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const timeSlots = ['8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM'];
+  // Randomly mark some slots as booked for realism
+  const bookedMap = {};
+
+  function getBookedKey(y,m,d) { return `${y}-${m}-${d}`; }
+
+  function renderCalendar() {
+    document.getElementById('cal-title').textContent = MONTHS[calMonth] + ' ' + calYear;
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const firstDay = new Date(calYear, calMonth, 1).getDay();
+    const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      grid.innerHTML += `<div style="background:var(--white);padding:0.6rem;"></div>`;
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(calYear, calMonth, d);
+      const isPast = date < today;
+      const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+      const isDisabled = isPast || isWeekend;
+      const isSelected = booking.date && booking.date.getDate()===d && booking.date.getMonth()===calMonth && booking.date.getFullYear()===calYear;
+
+      let bg = 'var(--white)'; let color = 'var(--soil)'; let cursor = 'pointer'; let hover = '';
+      if (isDisabled) { bg='var(--cream)'; color='#C0B090'; cursor='default'; }
+      if (isSelected) { bg='var(--soil)'; color='var(--wheat)'; }
+
+      grid.innerHTML += `<div onclick="${isDisabled?'':'selectDate('+calYear+','+calMonth+','+d+')'}"
+        style="background:${bg};padding:0.65rem;text-align:center;font-size:0.85rem;font-weight:${isSelected?'700':'400'};
+        color:${color};cursor:${cursor};transition:background 0.15s;border:${isSelected?'2px solid var(--wheat)':'2px solid transparent'};"
+        onmouseover="if(!${isDisabled}) this.style.background='${isSelected?'var(--soil)':'rgba(200,147,58,0.1)'}'"
+        onmouseout="this.style.background='${bg}'">${d}</div>`;
+    }
+  }
+
+  function prevMonth() {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  }
+
+  function nextMonth() {
+    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+  }
+
+  function selectDate(y, m, d) {
+    booking.date = new Date(y, m, d);
+    booking.time = '';
+    renderCalendar();
+    renderTimeSlots(y, m, d);
+    document.getElementById('time-section').style.display = 'block';
+    const btn = document.getElementById('btn-step2');
+    btn.disabled = true; btn.style.opacity = '0.4';
+  }
+
+  function renderTimeSlots(y, m, d) {
+    const key = getBookedKey(y,m,d);
+    if (!bookedMap[key]) {
+      // randomly mark 30–50% as booked for realism
+      bookedMap[key] = timeSlots.map(() => Math.random() < 0.35);
+    }
+    const booked = bookedMap[key];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('selected-date-label').textContent = `${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(y,m,d).getDay()]}, ${d} ${months[m]} ${y}`;
+
+    const container = document.getElementById('time-slots');
+    container.innerHTML = '';
+    timeSlots.forEach((t, i) => {
+      const isBooked = booked[i];
+      const isSelected = booking.time === t;
+      container.innerHTML += `<div onclick="${isBooked?'':'selectTime(\''+t+'\')'}"
+        style="padding:0.6rem;text-align:center;font-size:0.78rem;font-weight:600;
+        border:1px solid ${isSelected?'var(--soil)':isBooked?'rgba(44,26,14,0.06)':'rgba(44,26,14,0.15)'};
+        background:${isSelected?'var(--soil)':isBooked?'rgba(44,26,14,0.03)':'var(--white)'};
+        color:${isSelected?'var(--wheat)':isBooked?'#C0B090':'var(--soil)'};
+        cursor:${isBooked?'default':'pointer'};
+        text-decoration:${isBooked?'line-through':'none'};
+        transition:all 0.15s;"
+        onmouseover="if(!${isBooked}&&!${isSelected}) this.style.background='rgba(200,147,58,0.08)'"
+        onmouseout="this.style.background='${isSelected?'var(--soil)':isBooked?'rgba(44,26,14,0.03)':'var(--white)'}'">
+        ${isBooked?'<s>'+t+'</s>':t}
+      </div>`;
+    });
+  }
+
+  function selectTime(t) {
+    booking.time = t;
+    if (booking.date) {
+      renderTimeSlots(booking.date.getFullYear(), booking.date.getMonth(), booking.date.getDate());
+    }
+    const btn = document.getElementById('btn-step2');
+    btn.disabled = false; btn.style.opacity = '1';
+  }
+
+  function populateConfirmation() {
+    booking.fname = document.getElementById('b-fname').value;
+    booking.lname = document.getElementById('b-lname').value;
+    booking.email = document.getElementById('b-email').value;
+    booking.phone = document.getElementById('b-phone').value;
+    booking.company = document.getElementById('b-company').value;
+
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const d = booking.date;
+    const dateStr = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+    document.getElementById('confirm-service').textContent = booking.service;
+    document.getElementById('confirm-date').textContent = dateStr;
+    document.getElementById('confirm-time').textContent = booking.time;
+    document.getElementById('confirm-duration').textContent = booking.duration;
+    document.getElementById('confirm-name').textContent = (booking.fname + ' ' + booking.lname).trim() || '—';
+    document.getElementById('confirm-email-display').textContent = booking.email || '—';
+  }
+
+  function confirmBooking() {
+    const d = booking.date;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const dateStr = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+    document.getElementById('success-summary').innerHTML =
+      `<strong>${booking.service}</strong><br>${dateStr} at ${booking.time} AEST<br>Duration: ${booking.duration}<br>Confirmed for: ${(booking.fname+' '+booking.lname).trim()||'—'}`;
+
+    // Hide tabs
+    document.getElementById('step-indicator').style.display = 'none';
+    goStep('success');
+  }
+</script>
+
